@@ -413,6 +413,9 @@ export default function Layout(props) {
           </header>
         )}
 
+        {/* ── Body: sidebar + main (wrapped for header layout) ── */}
+        <div className="shell-body">
+
         {/* ── Sidebar ── */}
         <aside className={'portal-sidebar' + (mobileOpen ? ' open' : '')} id="portalSidebar">
           {!hasHeader && (
@@ -530,6 +533,8 @@ export default function Layout(props) {
           )}
           {children || <Outlet />}
         </main>
+
+        </div>{/* .shell-body */}
       </div>
     </ViewAsContext.Provider>
     </SessionContext.Provider>
