@@ -19,8 +19,8 @@ export {
   ScoreRing,
 } from './components.jsx'
 
-// Layout shell with session context
-export { default as Layout, useSession } from './Layout.jsx'
+// Layout shell with session context + view-as system
+export { default as Layout, useSession, ViewAsContext, useViewAs } from './Layout.jsx'
 
 // Login page
 export { default as Login } from './Login.jsx'
@@ -40,6 +40,9 @@ export {
   IconArrowUp, IconArrowDown, IconArrowLeft, IconArrowRight,
   IconChevronRight, IconChevronDown, IconRocket, IconTarget,
   IconFolder, IconClipboard, IconPalette, IconEdit, IconReceipt,
+  IconSearch, IconPlay, IconUserPlus, IconMonitor, IconMoon, IconSun,
+  IconPipeline, IconSend, IconShield, IconGridPlus, IconLink, IconPackage,
+  IconQuestion, IconPaperclip, IconChevronUp,
   LogoSprintMode, LogoStudios, LogoMode, LogoHub,
   LogoSprintCapital, LogoPrivacyAI,
   ProductIcon,
