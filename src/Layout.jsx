@@ -219,7 +219,7 @@ export default function Layout({ navConfig, logoSrc, logoAlt, onLogout, profileP
         {/* Sidebar */}
         <aside className={'portal-sidebar' + (mobileOpen ? ' open' : '')} id="portalSidebar">
           <div className="portal-sidebar-logo">
-            <img src={logo} alt={alt} style={{ height: 24, width: 'auto' }} />
+            <picture><source srcSet={logo.replace(".png", "-dark.png")} media="(prefers-color-scheme: dark)" /><img src={logo} alt={alt} style={{ height: 24, width: "auto" }} /></picture>
           </div>
           <nav className="portal-sidebar-nav">
             {sections.map(function(section) {
@@ -262,7 +262,7 @@ export default function Layout({ navConfig, logoSrc, logoAlt, onLogout, profileP
             <span style={{ display: 'block', width: 18, height: 2, background: 'var(--foreground)', borderRadius: 1 }} />
             <span style={{ display: 'block', width: 18, height: 2, background: 'var(--foreground)', borderRadius: 1 }} />
           </button>
-          <img src={logo} alt={alt} style={{ height: 24, width: 'auto' }} />
+          <picture><source srcSet={logo.replace(".png", "-dark.png")} media="(prefers-color-scheme: dark)" /><img src={logo} alt={alt} style={{ height: 24, width: "auto" }} /></picture>
         </div>
 
         {/* Overlay */}

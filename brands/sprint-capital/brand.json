@@ -1,0 +1,20 @@
+{
+  "name": "sprint-capital",
+  "displayNames": [
+    "Capital",
+    "CapitalAI"
+  ],
+  "color": "#1fac6a",
+  "tint": "#e8f6f0",
+  "font": "Geist",
+  "fontMono": "Geist Mono",
+  "fontUrl": "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css",
+  "fontMonoUrl": "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css",
+  "css": {
+    "--accent": "#1fac6a",
+    "--accent-hover": "#1fac6a",
+    "--accent-10": "rgba(31, 172, 106, 0.1)",
+    "--accent-20": "rgba(31, 172, 106, 0.2)",
+    "--tint": "#e8f6f0"
+  }
+}

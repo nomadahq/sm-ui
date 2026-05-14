@@ -39,7 +39,21 @@ export var IconX = function(p) { return <svg {...S} {...p}><line x1="18" y1="6" 
 export var IconMail = function(p) { return <svg {...S} {...p}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg> }
 export var IconChevron = function(p) { return <svg {...S} {...p}><polyline points="6 9 12 15 18 9"/></svg> }
 
+
 // ═══ PRODUCT LOGO ICONS (from DESIGN_SYSTEM.md Section 5) ═══
+export var IconArrowUp = function(p) { return <svg {...S} {...p}><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg> }
+export var IconArrowDown = function(p) { return <svg {...S} {...p}><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg> }
+export var IconArrowLeft = function(p) { return <svg {...S} {...p}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> }
+export var IconArrowRight = function(p) { return <svg {...S} {...p}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> }
+export var IconChevronRight = function(p) { return <svg {...S} {...p}><polyline points="9 18 15 12 9 6"/></svg> }
+export var IconChevronDown = function(p) { return <svg {...S} {...p}><polyline points="6 9 12 15 18 9"/></svg> }
+export var IconRocket = function(p) { return <svg {...S} {...p}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> }
+export var IconTarget = function(p) { return <svg {...S} {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> }
+export var IconFolder = function(p) { return <svg {...S} {...p}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> }
+export var IconClipboard = function(p) { return <svg {...S} {...p}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> }
+export var IconPalette = function(p) { return <svg {...S} {...p}><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.14-.74-.39-1.04-.24-.3-.39-.65-.39-1.04 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.17-4.5-9-10-9z"/></svg> }
+export var IconEdit = function(p) { return <svg {...S} {...p}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> }
+export var IconReceipt = function(p) { return <svg {...S} {...p}><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> }
 // These are 24x24 stroke icons matching the brand logo design.
 // Wrap in a tint background div for the "app icon" look.
 
@@ -53,13 +67,13 @@ export var LogoMode = function(p) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="#f4930a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
 }
 export var LogoHub = function(p) {
-  return <svg viewBox="0 0 24 24" fill="none" stroke="#2362ea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+  return <svg viewBox="0 0 24 24" fill="none" stroke="#4f5d93" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
 }
 export var LogoSprintCapital = function(p) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="#1fac6a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
 }
 export var LogoPrivacyAI = function(p) {
-  return <svg viewBox="0 0 24 24" fill="none" stroke="#0fb67f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+  return <svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
 }
 
 // Tinted product icon badge wrapper
@@ -69,9 +83,9 @@ export var ProductIcon = function(p) {
     'sprint-mode':    { bg: '#e9effc', Logo: LogoSprintMode },
     'studios':        { bg: '#f1ecfa', Logo: LogoStudios },
     'mode':           { bg: '#fdf4e6', Logo: LogoMode },
-    'hub':            { bg: '#e9effc', Logo: LogoHub },
+    'hub':            { bg: '#eef0f8', Logo: LogoHub },
     'sprint-capital': { bg: '#e8f6f0', Logo: LogoSprintCapital },
-    'privacyai':      { bg: '#e7f7f2', Logo: LogoPrivacyAI },
+    'privacyai':      { bg: '#e8f4f8', Logo: LogoPrivacyAI },
   }
   var c = colors[product] || colors['sprint-mode']
   var size = p.size || 40
