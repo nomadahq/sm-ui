@@ -9,8 +9,7 @@
   "tint": "#e9effc",
   "font": "Geist",
   "fontMono": "Geist Mono",
-  "fontUrl": "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css",
-  "fontMonoUrl": "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css",
+  "fontUrl": "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap",
   "css": {
     "--accent": "#2362ea",
     "--accent-hover": "#2362ea",
