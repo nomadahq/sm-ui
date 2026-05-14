@@ -68,7 +68,9 @@ function SidebarSection({ label, Logo, sectionIcon, sectionColor, items, color, 
     return item.exact ? location.pathname === item.to : location.pathname.startsWith(item.to)
   })
 
+  var _mounted = useRef(false)
   useEffect(function() {
+    if (!_mounted.current) { _mounted.current = true; return }
     if (hasActive && !open) {
       if (isExternallyManaged) onToggle()
       else setInternalOpen(true)
