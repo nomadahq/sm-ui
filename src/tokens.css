@@ -73,8 +73,31 @@
 [data-product="capital"]     { --accent: #1fac6a; --accent-hover: #189b5d; --accent-10: rgba(31,172,106,.1); --accent-20: rgba(31,172,106,.2); --accent-tint: #e8f6f0; }
 [data-product="privacyai"]   { --accent: #0891b2; --accent-hover: #077d9b; --accent-10: rgba(8,145,178,.1); --accent-20: rgba(8,145,178,.2); --accent-tint: #e8f4f8; }
 
+/* Manual dark mode override */
+[data-theme="dark"] {
+    --foreground:  hsl(0, 0%, 93%);
+    --muted:       hsl(220, 9%, 60%);
+    --bg:          hsl(220, 14%, 10%);
+    --bg-subtle:   hsl(220, 14%, 8%);
+    --bg-card:     hsl(220, 14%, 13%);
+    --border:      hsl(214, 20%, 20%);
+    --blue-10:     hsla(221, 83%, 53%, 0.15);
+    --blue-20:     hsla(221, 83%, 53%, 0.25);
+    --green-light: hsl(142, 40%, 15%);
+    --red-light:   hsl(0, 40%, 15%);
+    --amber-light: hsl(38, 40%, 15%);
+
+    --tint-sprint-mode:    hsl(221, 50%, 14%);
+    --tint-studios:        hsl(262, 40%, 14%);
+    --tint-mode:           hsl(38, 60%, 12%);
+    --tint-hub:            hsl(228, 30%, 16%);
+    --tint-sprint-capital: hsl(152, 40%, 12%);
+    --tint-privacyai:      hsl(192, 40%, 13%);
+}
+
+/* Auto dark: OS dark preference when no manual light override */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --foreground:  hsl(0, 0%, 93%);
     --muted:       hsl(220, 9%, 60%);
     --bg:          hsl(220, 14%, 10%);
