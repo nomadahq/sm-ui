@@ -25,6 +25,9 @@ export { default as Layout, useSession } from './Layout.jsx'
 // Login page
 export { default as Login } from './Login.jsx'
 
+// API Documentation page
+export { default as ApiDocs } from './ApiDocs.jsx'
+
 // Icons
 export {
   IconGrid, IconCode, IconDoc, IconLock, IconTrend,
