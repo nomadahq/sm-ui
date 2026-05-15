@@ -110,6 +110,14 @@ function SidebarSection({ label, Logo, sectionIcon, sectionColor, items, color, 
                 </a>
               )
             }
+            if (item.disabled) {
+              return (
+                <span key={item.to || item.label} className="ps-item disabled">
+                  {item.step != null ? <span className="ps-step">{item.step}</span> : item.Icon && <item.Icon />}
+                  {' '}{item.label}
+                </span>
+              )
+            }
             return (
               <NavLink
                 key={item.to}
@@ -278,7 +286,16 @@ export default function Layout(props) {
     if (!showViewAs) return
     fetch(viewAsApi, { credentials: 'include' })
       .then(function(r) { return r.ok ? r.json() : [] })
-      .then(function(data) { setAllUsers(Array.isArray(data) ? data : []) })
+      .then(function(data) {
+        // Handle SM API envelope: { ok, data: { contacts: [...] } } or { ok, data: [...] }
+        if (Array.isArray(data)) return setAllUsers(data)
+        if (data && data.ok && data.data) {
+          var d = data.data
+          setAllUsers(d.contacts || (Array.isArray(d) ? d : []))
+        } else {
+          setAllUsers(Array.isArray(data) ? data : [])
+        }
+      })
       .catch(function() {})
   }, [showViewAs, viewAsApi])
 
@@ -289,7 +306,12 @@ export default function Layout(props) {
       : viewAsApi + '/' + encodeURIComponent(email)
     fetch(detailUrl, { credentials: 'include' })
       .then(function(r) { return r.ok ? r.json() : null })
-      .then(function(data) { if (data) setViewAs(data) })
+      .then(function(data) {
+        // Handle SM API envelope
+        var user = data
+        if (data && data.ok && data.data) user = data.data
+        if (user) setViewAs(user)
+      })
       .catch(function() {
         var target = allUsers.find(function(u) { return u.email === email })
         if (target) setViewAs(target)
