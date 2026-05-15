@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react'
 import { NavLink, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { getSession, clearSession } from './api.js'
-import { IconChevron } from './Icons.jsx'
+import { IconChevron, IconSearch, IconMoon, IconSun, IconUser } from './Icons.jsx'
 
 // ═══ SESSION CONTEXT ═══
 
@@ -9,11 +9,163 @@ var SessionContext = createContext(null)
 export function useSession() { return useContext(SessionContext) }
 
 // ═══ VIEW-AS CONTEXT ═══
-// Provides the impersonated user object (or null) to child components.
-// Any page can check useViewAs() to scope its data or UI appropriately.
 
 export var ViewAsContext = createContext(null)
 export function useViewAs() { return useContext(ViewAsContext) }
+
+// ═══ THEME HELPERS ═══
+
+function getStoredTheme() {
+  try { return localStorage.getItem('sm-theme') } catch (e) { return null }
+}
+function setStoredTheme(t) {
+  try { localStorage.setItem('sm-theme', t) } catch (e) {}
+}
+export function useTheme() {
+  var _d = useState(function() { return getStoredTheme() === 'dark' })
+  var isDark = _d[0]; var setIsDark = _d[1]
+  useEffect(function() {
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+    setStoredTheme(isDark ? 'dark' : 'light')
+  }, [isDark])
+  return { isDark: isDark, toggle: function() { setIsDark(function(d) { return !d }) } }
+}
+
+// ═══ CMD+K OVERLAY (standard shell — products provide items) ═══
+// Usage: <CmdK open={bool} onClose={fn} items={[{label,to,icon?,section?}]} onNavigate={fn} placeholder="..." />
+
+export function CmdK(props) {
+  var open = props.open; var onClose = props.onClose; var items = props.items || []
+  var onNavigate = props.onNavigate; var placeholder = props.placeholder || 'Jump to...'
+  var _q = useState(''); var q = _q[0]; var setQ = _q[1]
+  var _hi = useState(0); var hi = _hi[0]; var setHi = _hi[1]
+  var inputRef = useRef(null)
+
+  var filtered = open ? items.filter(function(s) {
+    if (s.disabled) return false
+    if (!q) return true
+    return (s.label || '').toLowerCase().indexOf(q.toLowerCase()) !== -1 ||
+           (s.section || '').toLowerCase().indexOf(q.toLowerCase()) !== -1
+  }) : []
+
+  useEffect(function() { if (open && inputRef.current) { inputRef.current.focus(); setQ(''); setHi(0) } }, [open])
+  useEffect(function() { setHi(0) }, [q])
+
+  useEffect(function() {
+    if (!open) return
+    var handler = function(e) {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setHi(function(h) { return h < filtered.length - 1 ? h + 1 : 0 }) }
+      if (e.key === 'ArrowUp') { e.preventDefault(); setHi(function(h) { return h > 0 ? h - 1 : filtered.length - 1 }) }
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        if (filtered[hi] && filtered[hi].to) { onClose(); if (onNavigate) onNavigate(filtered[hi].to); else window.location.href = filtered[hi].to }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return function() { window.removeEventListener('keydown', handler) }
+  }, [open, filtered.length, hi])
+
+  if (!open) return null
+
+  // Group by section
+  var sections = []; var sectionMap = {}
+  filtered.forEach(function(item) {
+    var sec = item.section || ''
+    if (!sectionMap[sec]) { sectionMap[sec] = []; sections.push(sec) }
+    sectionMap[sec].push(item)
+  })
+  var globalIdx = 0
+
+  return (
+    React.createElement(React.Fragment, null,
+      React.createElement('div', { onClick: onClose, style: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 10000 } }),
+      React.createElement('div', { style: { position: 'fixed', inset: 0, zIndex: 10001, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 100, pointerEvents: 'none' } },
+        React.createElement('div', { style: { width: 480, maxWidth: '90vw', pointerEvents: 'auto', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', maxHeight: '60vh', overflow: 'hidden' } },
+          // Search input
+          React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 } },
+            React.createElement(IconSearch, null),
+            React.createElement('input', { ref: inputRef, value: q, onChange: function(e) { setQ(e.target.value) }, placeholder: placeholder, style: { flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: 'var(--foreground)', fontFamily: 'var(--font)' } }),
+            React.createElement('kbd', { style: { fontSize: 11, padding: '1px 5px', border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--muted)' } }, 'esc')
+          ),
+          // Scrollable results
+          React.createElement('div', { style: { flex: 1, overflowY: 'auto', padding: 6 } },
+            filtered.length === 0
+              ? React.createElement('div', { style: { padding: '16px 12px', fontSize: 13, color: 'var(--muted)', textAlign: 'center' } }, 'No results')
+              : sections.map(function(sec) {
+                  return React.createElement(React.Fragment, { key: sec || '_' },
+                    sec ? React.createElement('div', { style: { fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--muted)', padding: '8px 12px 4px' } }, sec) : null,
+                    sectionMap[sec].map(function(item) {
+                      var idx = globalIdx++
+                      var isHi = idx === hi
+                      return React.createElement('a', {
+                        key: item.to || item.label,
+                        href: item.to || '#',
+                        onClick: function(e) { e.preventDefault(); onClose(); if (onNavigate) onNavigate(item.to); else if (item.to) window.location.href = item.to },
+                        onMouseEnter: function() { setHi(idx) },
+                        style: { display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, textDecoration: 'none', color: 'var(--foreground)', fontSize: 13, background: isHi ? 'var(--bg-subtle)' : 'transparent' }
+                      },
+                        item.step != null
+                          ? React.createElement('span', { style: { width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, border: '1.5px solid var(--accent)', color: 'var(--accent)', background: 'var(--accent-10)', flexShrink: 0 } }, item.step)
+                          : item.Icon
+                            ? React.createElement(item.Icon, null)
+                            : null,
+                        item.label
+                      )
+                    })
+                  )
+                })
+          ),
+          // Footer with keyboard hints
+          React.createElement('div', { style: { borderTop: '1px solid var(--border)', padding: '6px 16px', display: 'flex', gap: 12, alignItems: 'center', flexShrink: 0 } },
+            React.createElement('span', { style: { fontSize: 9, color: 'var(--muted)' } }, filtered.length + ' items'),
+            React.createElement('div', { style: { flex: 1 } }),
+            React.createElement('span', { style: { fontSize: 9, color: 'var(--muted)', fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', gap: 8 } },
+              React.createElement('kbd', { style: { padding: '1px 4px', background: 'var(--bg-subtle)', borderRadius: 3, border: '0.5px solid var(--border)' } }, '\u2191\u2193'),
+              'navigate',
+              React.createElement('kbd', { style: { padding: '1px 4px', background: 'var(--bg-subtle)', borderRadius: 3, border: '0.5px solid var(--border)' } }, '\u21B5'),
+              'select',
+              React.createElement('kbd', { style: { padding: '1px 4px', background: 'var(--bg-subtle)', borderRadius: 3, border: '0.5px solid var(--border)' } }, 'esc'),
+              'close'
+            )
+          )
+        )
+      )
+    )
+  )
+}
+
+// ═══ HEADER USER MENU ═══
+
+function HeaderUserMenu(props) {
+  var session = props.session; var profilePath = props.profilePath; var logoutHref = props.logoutHref
+  var _open = useState(false); var open = _open[0]; var setOpen = _open[1]
+  var ref = useRef(null)
+
+  useEffect(function() {
+    var close = function(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', close)
+    return function() { document.removeEventListener('mousedown', close) }
+  }, [])
+
+  var initials = session ? (session.name || session.email || '?').split(' ').map(function(w) { return w[0] }).join('').slice(0, 2).toUpperCase() : '?'
+
+  return React.createElement('div', { ref: ref, style: { position: 'relative' } },
+    React.createElement('button', {
+      onClick: function() { setOpen(function(o) { return !o }) },
+      className: 'shell-header-avatar',
+      style: { width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border)', background: 'var(--accent-10)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 600, cursor: 'pointer', padding: 0, flexShrink: 0 }
+    }, initials),
+    open ? React.createElement('div', { style: { position: 'absolute', right: 0, top: 40, width: 220, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', padding: 6, zIndex: 100 } },
+      React.createElement('div', { style: { padding: '8px 10px', fontSize: 12, color: 'var(--muted)', borderBottom: '1px solid var(--border)', marginBottom: 4 } },
+        React.createElement('div', { style: { fontWeight: 600, color: 'var(--foreground)', fontSize: 13 } }, session && (session.name || session.email)),
+        session && session.company_name ? React.createElement('div', { style: { marginTop: 2 } }, session.company_name) : null
+      ),
+      profilePath ? React.createElement('a', { href: profilePath, style: { display: 'block', padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--foreground)', textDecoration: 'none' } }, 'Profile') : null,
+      React.createElement('a', { href: logoutHref, style: { display: 'block', padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--foreground)', textDecoration: 'none' } }, 'Sign out')
+    ) : null
+  )
+}
 
 // ═══ PRODUCT COLOR MAP ═══
 
@@ -251,14 +403,28 @@ export default function Layout(props) {
   var headerIcon = props.headerIcon
   var onLogout = props.onLogout
   var profilePath = props.profilePath
+  var cmdKEnabled = props.cmdK !== false // enabled by default when title is set
+  var cmdKPlaceholder = (props.cmdK && props.cmdK.placeholder) || 'Jump to...'
+  var cmdKItems = props.cmdKItems // optional custom items; auto-built from nav if omitted
 
   // Session state — use prop or auto-fetch
   var _s = useState(sessionProp || null); var session = _s[0]; var setSession = _s[1]
   var _l = useState(!sessionProp); var loading = _l[0]; var setLoading = _l[1]
   var _m = useState(false); var mobileOpen = _m[0]; var setMobileOpen = _m[1]
   var _d = useState(false); var dropdownOpen = _d[0]; var setDropdownOpen = _d[1]
+  var _cmdkOpen = useState(false); var cmdkOpen = _cmdkOpen[0]; var setCmdkOpen = _cmdkOpen[1]
+  var theme = useTheme()
   var navigate = useNavigate()
   var location = useLocation()
+
+  // Cmd+K global keyboard listener
+  useEffect(function() {
+    var handler = function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setCmdkOpen(true) }
+    }
+    window.addEventListener('keydown', handler)
+    return function() { window.removeEventListener('keydown', handler) }
+  }, [])
 
   // Sync session prop changes
   useEffect(function() {
@@ -395,6 +561,51 @@ export default function Layout(props) {
   }
   var hasHeader = !!(title || headerRight)
 
+  // ── Build Cmd+K items from nav sections ──
+  var autoCmdKItems = []
+  if (!cmdKItems) {
+    sections.forEach(function(section) {
+      section.nav.items.forEach(function(item) {
+        if (item.to && !item.disabled && !item.external) {
+          autoCmdKItems.push({ label: item.label, to: item.to, section: section.nav.label, step: item.step, Icon: item.Icon })
+        }
+      })
+    })
+    if (navBottom) {
+      navBottom.forEach(function(item) {
+        if (item.to) autoCmdKItems.push({ label: item.label, to: item.to, Icon: item.Icon })
+      })
+    }
+  }
+  var cmdkItems = cmdKItems || autoCmdKItems
+
+  // ── Standard header-right items (rendered after custom headerRight) ──
+  var standardHeaderRight = hasHeader && session ? (
+    <>
+      {cmdKEnabled && (
+        <button onClick={function() { setCmdkOpen(true) }} style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 8,
+          background: 'var(--bg)', color: 'var(--muted)',
+          fontSize: 13, cursor: 'pointer', transition: 'border-color .2s',
+        }}>
+          <IconSearch />
+          <span>Search</span>
+          <kbd style={{ fontSize: 11, padding: '1px 5px', border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--muted)', lineHeight: 1.4 }}>{'\u2318K'}</kbd>
+        </button>
+      )}
+      <button onClick={theme.toggle} aria-label="Toggle theme" style={{
+        width: 34, height: 34, border: '1px solid var(--border)', borderRadius: 7,
+        background: 'var(--bg-card)', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'border-color .2s', flexShrink: 0, padding: 0, color: 'var(--foreground)',
+      }}>
+        {theme.isDark ? <IconSun /> : <IconMoon />}
+      </button>
+      <HeaderUserMenu session={session} profilePath={profilePath} logoutHref={logoutHref} />
+    </>
+  ) : null
+
   // ── Collapsible section state (admin pattern) ──
   var _cs = useState(function() {
     if (!navSections) return {}
@@ -442,7 +653,12 @@ export default function Layout(props) {
                   <img src={themeLogo} alt={alt} style={{ height: 24, width: 'auto' }} />
                 )}
               </a>
-              {headerRight && <div className="shell-header-right">{headerRight}</div>}
+              {(headerRight || standardHeaderRight) && (
+                <div className="shell-header-right">
+                  {headerRight}
+                  {!headerRight && standardHeaderRight}
+                </div>
+              )}
             </div>
           </header>
         )}
@@ -569,6 +785,17 @@ export default function Layout(props) {
         </main>
 
         </div>{/* .shell-body */}
+
+        {/* Cmd+K overlay */}
+        {cmdKEnabled && (
+          <CmdK
+            open={cmdkOpen}
+            onClose={function() { setCmdkOpen(false) }}
+            items={cmdkItems}
+            onNavigate={function(to) { navigate(to) }}
+            placeholder={cmdKPlaceholder}
+          />
+        )}
       </div>
     </ViewAsContext.Provider>
     </SessionContext.Provider>
