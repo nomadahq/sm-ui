@@ -723,6 +723,19 @@ export default function Layout(props) {
 
           {sidebarBottom}
 
+          {/* Keyboard shortcut hints footer */}
+          {cmdKEnabled && hasHeader && (
+            <div className="portal-sidebar-footer">
+              <button
+                onClick={function() { setCmdkOpen(true) }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0', color: 'var(--muted)', fontSize: 11, width: '100%' }}
+              >
+                <kbd style={{ fontSize: 10, padding: '1px 5px', border: '1px solid var(--border)', borderRadius: 3, background: 'var(--bg-subtle)', color: 'var(--muted)', lineHeight: 1.4, fontFamily: 'var(--font-mono)' }}>⌘K</kbd>
+                <span>Search</span>
+              </button>
+            </div>
+          )}
+
           {/* Default user section (only if no header) */}
           {!hasHeader && (
             <div className="portal-sidebar-user">
