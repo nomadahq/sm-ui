@@ -612,6 +612,19 @@ export default function Layout(props) {
   var logoutHref = onLogout || ('/api/auth/logout?redirect=' + encodeURIComponent((typeof window !== 'undefined' ? window.location.origin : '') + '/auth/login'))
 
   // ── Standard header-right items (rendered after custom headerRight) ──
+  var viewAsSelect = showViewAs && allUsers.length > 0 ? React.createElement('select', {
+    value: viewAs ? viewAs.email : '',
+    onChange: function(e) { handleViewAs(e.target.value) },
+    style: { padding: '6px 10px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)', color: 'var(--foreground)', fontSize: 13, cursor: 'pointer', maxWidth: 200 }
+  },
+    React.createElement('option', { value: '' }, 'View as...'),
+    allUsers.filter(function(u) {
+      return u.email !== (session && session.email)
+    }).map(function(u) {
+      return React.createElement('option', { key: u.email || u.id, value: u.email }, u.name || u.company_name || u.email.split('@')[0])
+    })
+  ) : null
+
   var standardHeaderRight = hasHeader && session ? React.createElement(React.Fragment, null,
     cmdKEnabled ? React.createElement('button', {
       onClick: function() { setCmdkOpen(true) },
@@ -651,8 +664,9 @@ export default function Layout(props) {
                   <img src={themeLogo} alt={alt} style={{ height: 24, width: 'auto' }} />
                 )}
               </a>
-              {(headerRight || standardHeaderRight) && (
+              {(viewAsSelect || headerRight || standardHeaderRight) && (
                 <div className="shell-header-right">
+                  {viewAsSelect}
                   {headerRight}
                   {!headerRight && standardHeaderRight}
                 </div>
@@ -704,30 +718,6 @@ export default function Layout(props) {
                   </NavLink>
                 )
               })}
-            </div>
-          )}
-
-          {/* View-As selector (super_admin only) */}
-          {showViewAs && allUsers.length > 1 && (
-            <div className="portal-sidebar-viewas">
-              <div className="portal-sidebar-viewas-label">View as</div>
-              <select
-                value={viewAs ? viewAs.email : ''}
-                onChange={function(e) { handleViewAs(e.target.value) }}
-                className={'portal-sidebar-viewas-select' + (viewAs ? ' active' : '')}
-              >
-                <option value="">— Select —</option>
-                {allUsers.filter(function(u) {
-                  return u.email !== (session && session.email) && u.role !== 'super_admin'
-                }).filter(function(u, i, arr) {
-                  var base = u.email.replace('@sprintmode.co', '').replace('@sprintmode.ai', '')
-                  return arr.findIndex(function(o) {
-                    return o.email.replace('@sprintmode.co', '').replace('@sprintmode.ai', '') === base
-                  }) === i
-                }).map(function(u) {
-                  return <option key={u.email} value={u.email}>{u.name || u.email.split('@')[0]} ({u.role})</option>
-                })}
-              </select>
             </div>
           )}
 
