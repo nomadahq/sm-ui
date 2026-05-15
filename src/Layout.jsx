@@ -580,30 +580,20 @@ export default function Layout(props) {
   var cmdkItems = cmdKItems || autoCmdKItems
 
   // ── Standard header-right items (rendered after custom headerRight) ──
-  var standardHeaderRight = hasHeader && session ? (
-    <>
-      {cmdKEnabled && (
-        <button onClick={function() { setCmdkOpen(true) }} style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 8,
-          background: 'var(--bg)', color: 'var(--muted)',
-          fontSize: 13, cursor: 'pointer', transition: 'border-color .2s',
-        }}>
-          <IconSearch />
-          <span>Search</span>
-          <kbd style={{ fontSize: 11, padding: '1px 5px', border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--muted)', lineHeight: 1.4 }}>{'\u2318K'}</kbd>
-        </button>
-      )}
-      <button onClick={theme.toggle} aria-label="Toggle theme" style={{
-        width: 34, height: 34, border: '1px solid var(--border)', borderRadius: 7,
-        background: 'var(--bg-card)', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'border-color .2s', flexShrink: 0, padding: 0, color: 'var(--foreground)',
-      }}>
-        {theme.isDark ? <IconSun /> : <IconMoon />}
-      </button>
-      <HeaderUserMenu session={session} profilePath={profilePath} logoutHref={logoutHref} />
-    </>
+  var standardHeaderRight = hasHeader && session ? React.createElement(React.Fragment, null,
+    cmdKEnabled ? React.createElement('button', {
+      onClick: function() { setCmdkOpen(true) },
+      style: { display: 'flex', alignItems: 'center', gap: 8, padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)', color: 'var(--muted)', fontSize: 13, cursor: 'pointer', transition: 'border-color .2s' }
+    },
+      React.createElement(IconSearch, null),
+      React.createElement('span', null, 'Search'),
+      React.createElement('kbd', { style: { fontSize: 11, padding: '1px 5px', border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--muted)', lineHeight: 1.4 } }, '\u2318K')
+    ) : null,
+    React.createElement('button', {
+      onClick: theme.toggle, 'aria-label': 'Toggle theme',
+      style: { width: 34, height: 34, border: '1px solid var(--border)', borderRadius: 7, background: 'var(--bg-card)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'border-color .2s', flexShrink: 0, padding: 0, color: 'var(--foreground)' }
+    }, theme.isDark ? React.createElement(IconSun, null) : React.createElement(IconMoon, null)),
+    React.createElement(HeaderUserMenu, { session: session, profilePath: profilePath, logoutHref: logoutHref })
   ) : null
 
   // ── Collapsible section state (admin pattern) ──
