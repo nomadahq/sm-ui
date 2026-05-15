@@ -406,6 +406,7 @@ export default function Layout(props) {
   var cmdKEnabled = props.cmdK !== false // enabled by default when title is set
   var cmdKPlaceholder = (props.cmdK && props.cmdK.placeholder) || 'Jump to...'
   var cmdKItems = props.cmdKItems // optional custom items; auto-built from nav if omitted
+  var showCompanyName = props.showCompanyName // when true, appends " // {session.company_name}" to title
 
   // Session state — use prop or auto-fetch
   var _s = useState(sessionProp || null); var session = _s[0]; var setSession = _s[1]
@@ -638,7 +639,7 @@ export default function Layout(props) {
                         <rect x="3" y="3" width="18" height="18" rx="4"/><polyline points="10 8 14 12 10 16"/>
                       </svg>}
                     </div>
-                    <span className="shell-header-title">{title}</span>
+                    <span className="shell-header-title">{title}{showCompanyName && session && session.company_name ? React.createElement('span', { className: 'shell-header-company' }, ' // ' + session.company_name) : null}</span>
                   </>
                 ) : (
                   <img src={themeLogo} alt={alt} style={{ height: 24, width: 'auto' }} />
