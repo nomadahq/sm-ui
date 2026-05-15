@@ -48,7 +48,9 @@ export default function Login({ productName, logoSrc, authBase }) {
 
   var base = authBase || ''
   var params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams()
-  var redirect = params.get('redirect') || '/'
+  var rawRedirect = params.get('redirect') || '/'
+  // Always use absolute URL so SM API redirects back to portal, not to itself
+  var redirect = rawRedirect.indexOf('http') === 0 ? rawRedirect : (typeof window !== 'undefined' ? window.location.origin : '') + rawRedirect
 
   // Resolve logo for current theme (data-theme attribute)
   var isDark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark'
