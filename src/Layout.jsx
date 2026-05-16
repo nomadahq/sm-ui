@@ -22,7 +22,15 @@ function setStoredTheme(t) {
   try { localStorage.setItem('sm-theme', t) } catch (e) {}
 }
 export function useTheme() {
-  var _d = useState(function() { return getStoredTheme() === 'dark' })
+  var _d = useState(function() {
+    var stored = getStoredTheme()
+    if (stored) return stored === 'dark'
+    // No stored preference — follow OS
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
+    return false
+  })
   var isDark = _d[0]; var setIsDark = _d[1]
   useEffect(function() {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
