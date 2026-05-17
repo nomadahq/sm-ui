@@ -44,7 +44,7 @@
   /* Product colors */
   --color-sprint-mode:    #2362ea;
   --color-studios:        #7947d1;
-  --color-mode:           #f4930a;
+  --color-mode:           #0D9488;
   --color-hub:            #4f5d93;
   --color-sprint-capital: #1fac6a;
   --color-privacyai:      #0891b2;
@@ -52,7 +52,7 @@
   /* Product tints */
   --tint-sprint-mode:    #e9effc;
   --tint-studios:        #f1ecfa;
-  --tint-mode:           #fdf4e6;
+  --tint-mode:           #e6f5f3;
   --tint-hub:            #eef0f8;
   --tint-sprint-capital: #e8f6f0;
   --tint-privacyai:      #e8f4f8;
@@ -68,7 +68,7 @@
 /* Product accent selectors — set data-product on <html> or <body> */
 [data-product="sprint-mode"] { --accent: #2362ea; --accent-hover: hsl(221,83%,45%); --accent-10: rgba(35,98,234,.1); --accent-20: rgba(35,98,234,.2); --accent-tint: #e9effc; }
 [data-product="studios"]     { --accent: #7947d1; --accent-hover: #6a3cbc; --accent-10: rgba(121,71,209,.1); --accent-20: rgba(121,71,209,.2); --accent-tint: #f1ecfa; }
-[data-product="mode"]        { --accent: #f4930a; --accent-hover: #db840a; --accent-10: rgba(244,147,10,.1); --accent-20: rgba(244,147,10,.2); --accent-tint: #fdf4e6; }
+[data-product="mode"]        { --accent: #0D9488; --accent-hover: #0b7f74; --accent-10: rgba(13,148,136,.1); --accent-20: rgba(13,148,136,.2); --accent-tint: #e6f5f3; }
 [data-product="hub"]         { --accent: #4f5d93; --accent-hover: #434f7e; --accent-10: rgba(79,93,147,.1); --accent-20: rgba(79,93,147,.2); --accent-tint: #eef0f8; }
 [data-product="capital"]     { --accent: #1fac6a; --accent-hover: #189b5d; --accent-10: rgba(31,172,106,.1); --accent-20: rgba(31,172,106,.2); --accent-tint: #e8f6f0; }
 [data-product="privacyai"]   { --accent: #0891b2; --accent-hover: #077d9b; --accent-10: rgba(8,145,178,.1); --accent-20: rgba(8,145,178,.2); --accent-tint: #e8f4f8; }
@@ -89,7 +89,7 @@
 
     --tint-sprint-mode:    hsl(221, 50%, 14%);
     --tint-studios:        hsl(262, 40%, 14%);
-    --tint-mode:           hsl(38, 60%, 12%);
+    --tint-mode:           hsl(170, 40%, 12%);
     --tint-hub:            hsl(228, 30%, 16%);
     --tint-sprint-capital: hsl(152, 40%, 12%);
     --tint-privacyai:      hsl(192, 40%, 13%);
@@ -112,7 +112,7 @@
 
     --tint-sprint-mode:    hsl(221, 50%, 14%);
     --tint-studios:        hsl(262, 40%, 14%);
-    --tint-mode:           hsl(38, 60%, 12%);
+    --tint-mode:           hsl(170, 40%, 12%);
     --tint-hub:            hsl(228, 30%, 16%);
     --tint-sprint-capital: hsl(152, 40%, 12%);
     --tint-privacyai:      hsl(192, 40%, 13%);
