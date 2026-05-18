@@ -251,7 +251,7 @@ function SidebarSection({ label, Logo, sectionIcon, sectionColor, items, color, 
   var sectionStyle = { '--section-color': color, '--section-tint': tint }
 
   return (
-    <div className={'ps-section' + (open ? '' : ' collapsed')} data-product={product} style={sectionStyle}>
+    <div className={'ps-section' + (flat || open ? '' : ' collapsed')} data-product={product} style={sectionStyle}>
       {!flat && (
         <button className="ps-section-header" onClick={handleToggle}>
           {sectionIcon && (
