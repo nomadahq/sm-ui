@@ -559,6 +559,11 @@ export default function Layout(props) {
   if (navSections) {
     // Admin pattern: explicit sections array with role filtering
     navSections.forEach(function(section) {
+      // Heading dividers — just a label, no items
+      if (section.type === 'heading') {
+        sections.push({ key: section.key || section.label, heading: section.label })
+        return
+      }
       if (section.product && !canViewProduct(effectivePerms, effectiveRole, section.product)) return
       var visibleItems = section.items.filter(function(item) {
         return canViewSection(effectivePerms, effectiveRole, item.permKey)
@@ -592,6 +597,7 @@ export default function Layout(props) {
 
   // Resolve icon strings to components
   sections.forEach(function(section) {
+    if (!section.nav) return
     section.nav.items = section.nav.items.map(function(item) {
       if (item.icon && !item.Icon) {
         item = Object.assign({}, item, { Icon: resolveIcon(item.icon) })
@@ -617,6 +623,7 @@ export default function Layout(props) {
   var autoCmdKItems = []
   if (!cmdKItems) {
     sections.forEach(function(section) {
+      if (!section.nav) return
       section.nav.items.forEach(function(item) {
         if (item.to && !item.disabled && !item.external) {
           autoCmdKItems.push({ label: item.label, to: item.to, section: section.nav.label, step: item.step, Icon: item.Icon })
@@ -710,6 +717,15 @@ export default function Layout(props) {
           )}
           <nav className="portal-sidebar-nav">
             {sections.map(function(section) {
+              // Heading divider
+              if (section.heading) {
+                return (
+                  <div key={section.key} className="ps-heading" style={{
+                    fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px',
+                    color: 'var(--muted)', padding: '16px 14px 6px', userSelect: 'none',
+                  }}>{section.heading}</div>
+                )
+              }
               var pc = PRODUCT_COLORS[section.key] || PRODUCT_COLORS['sprint-mode']
               return (
                 <SidebarSection
