@@ -558,6 +558,7 @@ export default function Layout(props) {
           sectionColor: section.sectionColor,
         },
         product: section.product,
+        flat: section.flat,
       })
     })
   } else {
@@ -705,7 +706,7 @@ export default function Layout(props) {
                   color={pc.color}
                   tint={pc.tint}
                   product={section.key}
-                  flat={section.flat || section.nav.flat}
+                  flat={sections.length === 1 || section.flat || section.nav.flat}
                   collapsed={navSections ? collapsedState[section.key] : undefined}
                   onToggle={navSections ? function() { toggleCollapse(section.key) } : undefined}
                 />
