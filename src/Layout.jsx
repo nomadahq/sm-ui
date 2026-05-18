@@ -757,7 +757,7 @@ export default function Layout(props) {
             <span style={{ display: 'block', width: 18, height: 2, background: 'var(--foreground)', borderRadius: 1 }} />
             <span style={{ display: 'block', width: 18, height: 2, background: 'var(--foreground)', borderRadius: 1 }} />
           </button>
-          <img src={themeLogo} alt={alt} style={{ height: 24, width: 'auto' }} />
+          {!hasHeader && <img src={themeLogo} alt={alt} style={{ height: 24, width: 'auto' }} />}
         </div>
 
         {/* Overlay */}
