@@ -93,20 +93,62 @@ export function PageHeader({ breadcrumb, breadcrumbProduct, title, subtitle, chi
   )
 }
 
-export function Table({ headers, rows, empty, onRowClick }) {
+export function Table({ headers, rows, empty, onRowClick, sortable }) {
+  // Sorting — auto-enabled when headers are objects with .key/.label
+  var hasObjectHeaders = headers && headers.length > 0 && typeof headers[0] === 'object'
+  var enableSort = sortable !== false && hasObjectHeaders
+  var _sort = React.useState({ col: null, dir: 'asc' })
+  var sort = _sort[0]; var setSort = _sort[1]
+
   if (!rows || rows.length === 0) {
     return empty || <Empty title="No data" message="Nothing to show yet." />
   }
+
+  function handleSort(col) {
+    setSort(function(prev) {
+      return { col: col, dir: prev.col === col && prev.dir === 'asc' ? 'desc' : 'asc' }
+    })
+  }
+
+  var sorted = rows
+  if (enableSort && sort.col !== null) {
+    sorted = rows.slice().sort(function(a, b) {
+      var av = a.sortValues ? a.sortValues[sort.col] : a.cells[sort.col]
+      var bv = b.sortValues ? b.sortValues[sort.col] : b.cells[sort.col]
+      if (typeof av === 'object' && av !== null && av.props) av = av.props.children || ''
+      if (typeof bv === 'object' && bv !== null && bv.props) bv = bv.props.children || ''
+      var na = parseFloat(String(av).replace(/[^0-9.-]/g, ''))
+      var nb = parseFloat(String(bv).replace(/[^0-9.-]/g, ''))
+      if (!isNaN(na) && !isNaN(nb)) return sort.dir === 'asc' ? na - nb : nb - na
+      var sa = String(av || '').toLowerCase()
+      var sb = String(bv || '').toLowerCase()
+      if (sa < sb) return sort.dir === 'asc' ? -1 : 1
+      if (sa > sb) return sort.dir === 'asc' ? 1 : -1
+      return 0
+    })
+  }
+
   return (
     <table className="sm-table">
       <thead>
-        <tr>{headers.map(function(h, i) { return <th key={i}>{h}</th> })}</tr>
+        <tr>
+          {headers.map(function(h, i) {
+            if (!enableSort) return <th key={i}>{typeof h === 'object' ? h.label : h}</th>
+            var label = h.label || h
+            var align = h.align || 'left'
+            var arrow = sort.col === i ? (sort.dir === 'asc' ? ' ↑' : ' ↓') : ''
+            return <th key={i} onClick={function() { handleSort(i) }} style={{ cursor: 'pointer', userSelect: 'none', textAlign: align, whiteSpace: 'nowrap' }}>{label}{arrow}</th>
+          })}
+        </tr>
       </thead>
       <tbody>
-        {rows.map(function(row, ri) {
+        {sorted.map(function(row, ri) {
           return (
-            <tr key={ri} onClick={onRowClick ? function() { onRowClick(row, ri) } : undefined} style={onRowClick ? { cursor: 'pointer' } : undefined}>
-              {row.cells.map(function(cell, ci) { return <td key={ci}>{cell}</td> })}
+            <tr key={row.key || ri} onClick={onRowClick ? function() { onRowClick(row, ri) } : undefined} style={onRowClick ? { cursor: 'pointer' } : undefined}>
+              {row.cells.map(function(cell, ci) {
+                var align = enableSort && headers[ci] && headers[ci].align ? headers[ci].align : undefined
+                return <td key={ci} style={align ? { textAlign: align } : undefined}>{cell}</td>
+              })}
             </tr>
           )
         })}
