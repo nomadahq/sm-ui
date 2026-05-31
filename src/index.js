@@ -45,7 +45,7 @@ export {
   IconQuestion, IconPaperclip, IconChevronUp,
   LogoSprintMode, LogoStudios, LogoMode, LogoHub,
   LogoSprintCapital, LogoPrivacyAI,
-  ProductIcon, LogoDevPortal,
+  ProductIcon, LogoDevPortal, LogoSignal,
 } from './Icons.jsx'
 
 // Client-side API helpers

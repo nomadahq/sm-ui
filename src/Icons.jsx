@@ -105,6 +105,7 @@ export var ProductIcon = function(p) {
     'sprint-capital': { bg: '#e8f6f0', Logo: LogoSprintCapital },
     'privacyai':      { bg: '#e8f4f8', Logo: LogoPrivacyAI },
     'dev-portal':     { bg: '#b8b8bc', Logo: LogoDevPortal },
+    'signal':         { bg: '#f9ecf1', Logo: LogoSignal },
   }
   var c = colors[product] || colors['sprint-mode']
   var size = p.size || 40
@@ -118,4 +119,9 @@ export var ProductIcon = function(p) {
 // Dev Portal — terminal window icon
 export var LogoDevPortal = function(p) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="#4a4a52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="6.5" cy="6" r="0.8" fill="#4a4a52" stroke="none"/><circle cx="9" cy="6" r="0.8" fill="#4a4a52" stroke="none"/><circle cx="11.5" cy="6" r="0.8" fill="#4a4a52" stroke="none"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><polyline points="7 12.5 10 15.5 7 18.5"/><line x1="13" y1="18.5" x2="17" y2="18.5"/></svg>
+}
+
+// Signal — bar chart icon
+export var LogoSignal = function(p) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="#c24576" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" {...p}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 }

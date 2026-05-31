@@ -49,6 +49,7 @@
   --color-sprint-capital: #1fac6a;
   --color-privacyai:      #0891b2;
   --color-dev-portal:      #4a4a52;
+  --color-signal:          #c24576;
 
   /* Product tints */
   --tint-sprint-mode:    #e9effc;
@@ -58,6 +59,7 @@
   --tint-sprint-capital: #e8f6f0;
   --tint-privacyai:      #e8f4f8;
   --tint-dev-portal:       #b8b8bc;
+  --tint-signal:           #f9ecf1;
 
   /* Accent — default to sprint-mode blue */
   --accent:    #2362ea;
@@ -73,6 +75,7 @@
 [data-product="privacyai"]    { --accent: #0fb67f; --accent-10: rgba(15, 182, 127, 0.1); }
 [data-product="investor"]     { --accent: #2362ea; --accent-10: rgba(35, 98, 234, 0.1); }
 [data-product="dev-portal"]   { --accent: #4a4a52; --accent-10: rgba(74, 74, 82, 0.1); }
+[data-product="signal"]       { --accent: #c24576; --accent-hover: #a83b65; --accent-10: rgba(194,69,118,.1); --accent-20: rgba(194,69,118,.2); --accent-tint: #f9ecf1; }
 
 *, *::before, *::after { box-sizing: border-box; }
 
