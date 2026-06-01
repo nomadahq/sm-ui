@@ -71,7 +71,7 @@
 /* Per-product accent overrides (set via data-product on <html>) */
 [data-product="sprint-mode"]  { --accent: #2362ea; --accent-10: rgba(35, 98, 234, 0.1); }
 [data-product="studios"]      { --accent: #7947d1; --accent-10: rgba(121, 71, 209, 0.1); }
-[data-product="mode"]         { --accent: #0D9488; --accent-10: rgba(13, 148, 136, 0.1); }
+[data-product="mode"]        { --accent: #0c917b; --accent-hover: #0a7d6a; --accent-10: rgba(12,145,123,.1); --accent-20: rgba(12,145,123,.2); --accent-tint: #e6f4f1; }
 [data-product="hub"]          { --accent: #4f5d93; --accent-10: rgba(79, 93, 147, 0.1); }
 [data-product="sprint-capital"] { --accent: #1fac6a; --accent-10: rgba(31, 172, 106, 0.1); }
 [data-product="privacyai"]    { --accent: #0fb67f; --accent-10: rgba(15, 182, 127, 0.1); }

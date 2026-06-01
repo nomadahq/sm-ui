@@ -4,16 +4,16 @@
     "Mode",
     "ModeAI"
   ],
-  "color": "#f4930a",
-  "tint": "#fdf4e6",
+  "color": "#0c917b",
+  "tint": "#e6f4f1",
   "font": "Geist",
   "fontMono": "Geist Mono",
   "fontUrl": "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap",
   "css": {
-    "--accent": "#f4930a",
-    "--accent-hover": "#f4930a",
-    "--accent-10": "rgba(244, 147, 10, 0.1)",
-    "--accent-20": "rgba(244, 147, 10, 0.2)",
-    "--tint": "#fdf4e6"
+    "--accent": "#0c917b",
+    "--accent-hover": "#0a7d6a",
+    "--accent-10": "rgba(12,145,123,0.1)",
+    "--accent-20": "rgba(12,145,123,0.2)",
+    "--tint": "#e6f4f1"
   }
 }
