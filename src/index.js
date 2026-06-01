@@ -46,6 +46,8 @@ export {
   LogoSprintMode, LogoStudios, LogoMode, LogoHub,
   LogoSprintCapital, LogoPrivacyAI,
   ProductIcon, LogoDevPortal, LogoSignal, LogoAPI,
+  IconAddressBook, IconChartHistogram, IconReportMoney, IconMoneybag,
+  IconActivityHeartbeat, IconMessageCircle, IconGlobe, IconDevWindow,
 } from './Icons.jsx'
 
 // Client-side API helpers
