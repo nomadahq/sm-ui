@@ -68,6 +68,34 @@
   --accent-10: rgba(35, 98, 234, 0.1);
 }
 
+/* ─── Dark mode token overrides ───────────────────────────────────────────── */
+/* Set by useTheme() in Layout.jsx via data-theme="dark" on <html>.           */
+/* Also honours OS preference on first load (prefers-color-scheme: dark).      */
+[data-theme="dark"] {
+  /* Text */
+  --foreground:  hsl(0, 0%, 93%);
+  --muted:       hsl(220, 9%, 58%);
+
+  /* Surfaces */
+  --bg:          hsl(222, 14%, 10%);
+  --bg-subtle:   hsl(222, 14%, 13%);
+  --bg-card:     hsl(222, 14%, 13%);
+
+  /* Borders */
+  --border:      hsl(220, 13%, 22%);
+
+  /* Semantic light variants — darken for dark bg */
+  --green-light: hsl(142, 30%, 18%);
+  --red-light:   hsl(0, 30%, 18%);
+  --amber-light: hsl(38, 30%, 18%);
+
+  /* Brand blue stays legible on dark */
+  --blue:        hsl(221, 83%, 65%);
+  --blue-hover:  hsl(221, 83%, 72%);
+  --blue-10:     hsla(221, 83%, 65%, 0.15);
+  --blue-20:     hsla(221, 83%, 65%, 0.25);
+}
+
 /* Per-product accent overrides (set via data-product on <html>) */
 [data-product="sprint-mode"]  { --accent: #2362ea; --accent-10: rgba(35, 98, 234, 0.1); }
 [data-product="studios"]      { --accent: #7947d1; --accent-10: rgba(121, 71, 209, 0.1); }
