@@ -41,56 +41,219 @@ export function useTheme() {
 }
 
 // ═══ CMD+K OVERLAY (standard shell — products provide items) ═══
-// Usage: <CmdK open={bool} onClose={fn} items={[{label,to,icon?,section?}]} onNavigate={fn} placeholder="..." />
+// Usage: <CmdK open={bool} onClose={fn} items={[{label,to,icon?,section?,keywords?,subsection?,meta?}]}
+//              onNavigate={fn} placeholder="..." onSearch={async fn} recentKey="string" />
+// onSearch(query): async callback returning { items: [...] }. Debounced 200ms, min 2 chars.
+//   Results merge below static item matches. Static matches appear instantly.
+// recentKey: localStorage key for storing recent items. Shows "Recent" section on empty query.
+// meta: { badge, badgeColor, detail } — rendered as right-aligned pill + detail text.
+
+// Badge color CSS map (uses existing CSS var names where possible)
+var BADGE_COLORS = {
+  green: { bg: 'rgba(34,197,94,0.12)', color: '#16a34a' },
+  red: { bg: 'rgba(239,68,68,0.12)', color: '#dc2626' },
+  blue: { bg: 'rgba(59,130,246,0.12)', color: '#3b82f6' },
+  amber: { bg: 'rgba(245,158,11,0.12)', color: '#d97706' },
+  orange: { bg: 'rgba(249,115,22,0.12)', color: '#ea580c' },
+  purple: { bg: 'rgba(168,85,247,0.12)', color: '#9333ea' },
+  indigo: { bg: 'rgba(99,102,241,0.12)', color: '#6366f1' },
+  gray: { bg: 'rgba(107,114,128,0.12)', color: '#6b7280' },
+}
+
+function getRecent(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '[]').slice(0, 8) } catch(e) { return [] }
+}
+function pushRecent(key, item) {
+  try {
+    var list = getRecent(key).filter(function(r) { return r.to !== item.to })
+    list.unshift({ label: item.label, to: item.to, section: item.section || '', subsection: item.subsection || '' })
+    localStorage.setItem(key, JSON.stringify(list.slice(0, 8)))
+  } catch(e) {}
+}
+
+// Highlight matched substring in label — returns array of React elements
+function highlightMatch(label, query) {
+  if (!query) return [label]
+  var lower = (label || '').toLowerCase()
+  var idx = lower.indexOf(query.toLowerCase())
+  if (idx === -1) return [label]
+  return [
+    label.slice(0, idx),
+    React.createElement('strong', { key: 'hl', style: { fontWeight: 700 } }, label.slice(idx, idx + query.length)),
+    label.slice(idx + query.length)
+  ]
+}
 
 export function CmdK(props) {
   var open = props.open; var onClose = props.onClose; var items = props.items || []
   var onNavigate = props.onNavigate; var placeholder = props.placeholder || 'Jump to...'
+  var onSearch = props.onSearch; var recentKey = props.recentKey
   var _q = useState(''); var q = _q[0]; var setQ = _q[1]
   var _hi = useState(0); var hi = _hi[0]; var setHi = _hi[1]
+  var _asyncItems = useState([]); var asyncItems = _asyncItems[0]; var setAsyncItems = _asyncItems[1]
+  var _asyncTotal = useState(0); var asyncTotal = _asyncTotal[0]; var setAsyncTotal = _asyncTotal[1]
+  var _loading = useState(false); var loading = _loading[0]; var setLoading = _loading[1]
   var inputRef = useRef(null)
+  var debounceRef = useRef(null)
+  var searchIdRef = useRef(0)
 
+  // Filter static items — includes keywords fix
   var filtered = open ? items.filter(function(s) {
     if (s.disabled) return false
     if (!q) return true
-    return (s.label || '').toLowerCase().indexOf(q.toLowerCase()) !== -1 ||
-           (s.section || '').toLowerCase().indexOf(q.toLowerCase()) !== -1
+    var ql = q.toLowerCase()
+    return (s.label || '').toLowerCase().indexOf(ql) !== -1 ||
+           (s.section || '').toLowerCase().indexOf(ql) !== -1 ||
+           (s.keywords || '').toLowerCase().indexOf(ql) !== -1
   }) : []
 
-  useEffect(function() { if (open && inputRef.current) { inputRef.current.focus(); setQ(''); setHi(0) } }, [open])
+  // Debounced async search
+  useEffect(function() {
+    if (!open || !onSearch) return
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (q.length < 2) { setAsyncItems([]); setAsyncTotal(0); setLoading(false); return }
+    setLoading(true)
+    var id = ++searchIdRef.current
+    debounceRef.current = setTimeout(function() {
+      onSearch(q).then(function(result) {
+        if (id !== searchIdRef.current) return // stale
+        setAsyncItems((result && result.items) || [])
+        setAsyncTotal((result && result.total) || 0)
+        setLoading(false)
+      }).catch(function() {
+        if (id !== searchIdRef.current) return
+        setAsyncItems([]); setAsyncTotal(0); setLoading(false)
+      })
+    }, 200)
+    return function() { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [q, open])
+
+  // Recent items for empty query
+  var recentItems = (open && !q && recentKey) ? getRecent(recentKey) : []
+
+  useEffect(function() { if (open && inputRef.current) { inputRef.current.focus(); setQ(''); setHi(0); setAsyncItems([]); setAsyncTotal(0); setLoading(false) } }, [open])
   useEffect(function() { setHi(0) }, [q])
+
+  // Combine all displayable items for keyboard nav
+  var allItems = q ? filtered.concat(asyncItems) : (recentItems.length > 0 ? recentItems : filtered)
 
   useEffect(function() {
     if (!open) return
     var handler = function(e) {
       if (e.key === 'Escape') { onClose(); return }
-      if (e.key === 'ArrowDown') { e.preventDefault(); setHi(function(h) { return h < filtered.length - 1 ? h + 1 : 0 }) }
-      if (e.key === 'ArrowUp') { e.preventDefault(); setHi(function(h) { return h > 0 ? h - 1 : filtered.length - 1 }) }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setHi(function(h) { return h < allItems.length - 1 ? h + 1 : 0 }) }
+      if (e.key === 'ArrowUp') { e.preventDefault(); setHi(function(h) { return h > 0 ? h - 1 : allItems.length - 1 }) }
       if (e.key === 'Enter') {
         e.preventDefault()
-        if (filtered[hi] && filtered[hi].to) { onClose(); if (onNavigate) onNavigate(filtered[hi].to); else window.location.href = filtered[hi].to }
+        var sel = allItems[hi]
+        if (sel && sel.to) {
+          if (recentKey) pushRecent(recentKey, sel)
+          onClose()
+          if (onNavigate) onNavigate(sel.to); else window.location.href = sel.to
+        }
       }
     }
     window.addEventListener('keydown', handler)
     return function() { window.removeEventListener('keydown', handler) }
-  }, [open, filtered.length, hi])
+  }, [open, allItems.length, hi])
 
   if (!open) return null
 
-  // Group by section
-  var sections = []; var sectionMap = {}
-  filtered.forEach(function(item) {
-    var sec = item.section || ''
-    if (!sectionMap[sec]) { sectionMap[sec] = []; sections.push(sec) }
-    sectionMap[sec].push(item)
-  })
-  var globalIdx = 0
+  // Handle item selection (click)
+  function selectItem(item) {
+    if (recentKey) pushRecent(recentKey, item)
+    onClose()
+    if (onNavigate) onNavigate(item.to); else if (item.to) window.location.href = item.to
+  }
+
+  // Render a single result row — two-column layout with optional meta
+  function renderRow(item, idx, isHi) {
+    var meta = item.meta || {}
+    var bc = BADGE_COLORS[meta.badgeColor] || BADGE_COLORS.gray
+    var sectionLabel = item.subsection ? (item.section + ' > ' + item.subsection) : ''
+
+    return React.createElement('a', {
+      key: item.to || item.label || idx,
+      href: item.to || '#',
+      onClick: function(e) { e.preventDefault(); selectItem(item) },
+      onMouseEnter: function() { setHi(idx) },
+      style: { display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, textDecoration: 'none', color: 'var(--foreground)', fontSize: 13, background: isHi ? 'var(--bg-subtle)' : 'transparent', minHeight: 36 }
+    },
+      // Left side: icon + label
+      React.createElement('div', { style: { flex: 1, display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 } },
+        item.step != null
+          ? React.createElement('span', { style: { width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, border: '1.5px solid var(--accent)', color: 'var(--accent)', background: 'var(--accent-10)', flexShrink: 0 } }, item.step)
+          : item.Icon
+            ? React.createElement(item.Icon, null)
+            : null,
+        React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } },
+          sectionLabel
+            ? React.createElement(React.Fragment, null,
+                React.createElement('span', { style: { color: 'var(--muted)', fontSize: 11 } }, sectionLabel + ' > '),
+                highlightMatch(item.label, q)
+              )
+            : highlightMatch(item.label, q)
+        )
+      ),
+      // Right side: badge pill + detail text
+      (meta.badge || meta.detail)
+        ? React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, fontSize: 11 } },
+            meta.badge
+              ? React.createElement('span', { style: { padding: '1px 7px', borderRadius: 9, fontSize: 10, fontWeight: 600, background: bc.bg, color: bc.color, whiteSpace: 'nowrap' } }, meta.badge)
+              : null,
+            meta.detail
+              ? React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' } }, meta.detail)
+              : null
+          )
+        : null
+    )
+  }
+
+  // Group items by section for rendering
+  function renderGrouped(itemList, startIdx) {
+    var sections = []; var sectionMap = {}
+    itemList.forEach(function(item) {
+      var sec = item.section || ''
+      if (!sectionMap[sec]) { sectionMap[sec] = []; sections.push(sec) }
+      sectionMap[sec].push(item)
+    })
+    var idx = startIdx
+    return sections.map(function(sec) {
+      return React.createElement(React.Fragment, { key: sec || '_' + idx },
+        sec ? React.createElement('div', { style: { fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--muted)', padding: '8px 12px 4px' } }, sec) : null,
+        sectionMap[sec].map(function(item) {
+          var i = idx++
+          return renderRow(item, i, i === hi)
+        })
+      )
+    })
+  }
+
+  // Loading skeleton rows
+  function renderSkeletons() {
+    return [0, 1, 2].map(function(i) {
+      return React.createElement('div', { key: 'skel-' + i, style: { display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px' } },
+        React.createElement('div', { style: { width: 180 + (i * 30), height: 12, borderRadius: 4, background: 'var(--bg-subtle)', animation: 'cmdk-pulse 1.2s ease-in-out infinite' } }),
+        React.createElement('div', { style: { flex: 1 } }),
+        React.createElement('div', { style: { width: 50, height: 12, borderRadius: 4, background: 'var(--bg-subtle)', animation: 'cmdk-pulse 1.2s ease-in-out infinite', animationDelay: '0.2s' } })
+      )
+    })
+  }
+
+  // Determine what to show in results area
+  var showRecent = !q && recentItems.length > 0
+  var showEmpty = !q && recentItems.length === 0 && filtered.length === 0
+  var showNoResults = q && filtered.length === 0 && asyncItems.length === 0 && !loading
+  var overflowCount = asyncTotal > asyncItems.length ? asyncTotal - asyncItems.length : 0
+  var totalCount = q ? filtered.length + asyncItems.length : (showRecent ? recentItems.length : filtered.length)
 
   return (
     React.createElement(React.Fragment, null,
+      // Pulse animation style
+      React.createElement('style', null, '@keyframes cmdk-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }'),
       React.createElement('div', { onClick: onClose, style: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 10000 } }),
       React.createElement('div', { style: { position: 'fixed', inset: 0, zIndex: 10001, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 100, pointerEvents: 'none' } },
-        React.createElement('div', { style: { width: 480, maxWidth: '90vw', pointerEvents: 'auto', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', maxHeight: '60vh', overflow: 'hidden' } },
+        React.createElement('div', { style: { width: 520, maxWidth: '90vw', pointerEvents: 'auto', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', maxHeight: '60vh', overflow: 'hidden' } },
           // Search input
           React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 } },
             React.createElement(IconSearch, null),
@@ -99,35 +262,42 @@ export function CmdK(props) {
           ),
           // Scrollable results
           React.createElement('div', { style: { flex: 1, overflowY: 'auto', padding: 6 } },
-            filtered.length === 0
-              ? React.createElement('div', { style: { padding: '16px 12px', fontSize: 13, color: 'var(--muted)', textAlign: 'center' } }, 'No results')
-              : sections.map(function(sec) {
-                  return React.createElement(React.Fragment, { key: sec || '_' },
-                    sec ? React.createElement('div', { style: { fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--muted)', padding: '8px 12px 4px' } }, sec) : null,
-                    sectionMap[sec].map(function(item) {
-                      var idx = globalIdx++
-                      var isHi = idx === hi
-                      return React.createElement('a', {
-                        key: item.to || item.label,
-                        href: item.to || '#',
-                        onClick: function(e) { e.preventDefault(); onClose(); if (onNavigate) onNavigate(item.to); else if (item.to) window.location.href = item.to },
-                        onMouseEnter: function() { setHi(idx) },
-                        style: { display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, textDecoration: 'none', color: 'var(--foreground)', fontSize: 13, background: isHi ? 'var(--bg-subtle)' : 'transparent' }
-                      },
-                        item.step != null
-                          ? React.createElement('span', { style: { width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, border: '1.5px solid var(--accent)', color: 'var(--accent)', background: 'var(--accent-10)', flexShrink: 0 } }, item.step)
-                          : item.Icon
-                            ? React.createElement(item.Icon, null)
-                            : null,
-                        item.label
-                      )
-                    })
-                  )
-                })
+            // Recent items (empty query)
+            showRecent
+              ? React.createElement(React.Fragment, null,
+                  React.createElement('div', { style: { fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--muted)', padding: '8px 12px 4px' } }, 'Recent'),
+                  recentItems.map(function(item, i) { return renderRow(item, i, i === hi) })
+                )
+              : null,
+            // Filtered static items (when query present)
+            q && filtered.length > 0
+              ? renderGrouped(filtered, 0)
+              : null,
+            // Async results (below static matches)
+            q && asyncItems.length > 0
+              ? renderGrouped(asyncItems, filtered.length)
+              : null,
+            // Loading skeletons
+            q && loading ? renderSkeletons() : null,
+            // Overflow indicator
+            overflowCount > 0
+              ? React.createElement('div', { style: { padding: '6px 12px', fontSize: 11, color: 'var(--muted)', textAlign: 'center' } }, overflowCount + ' more results')
+              : null,
+            // Empty/no-results states
+            showEmpty
+              ? React.createElement('div', { style: { padding: '16px 12px', fontSize: 13, color: 'var(--muted)', textAlign: 'center' } }, 'Start typing to search')
+              : null,
+            showNoResults
+              ? React.createElement('div', { style: { padding: '16px 12px', fontSize: 13, color: 'var(--muted)', textAlign: 'center' } }, 'Try searching by name, domain, or email')
+              : null,
+            // All static items when no query and no recent
+            !q && !showRecent && filtered.length > 0
+              ? renderGrouped(filtered, 0)
+              : null
           ),
           // Footer with keyboard hints
           React.createElement('div', { style: { borderTop: '1px solid var(--border)', padding: '6px 16px', display: 'flex', gap: 12, alignItems: 'center', flexShrink: 0 } },
-            React.createElement('span', { style: { fontSize: 9, color: 'var(--muted)' } }, filtered.length + ' items'),
+            React.createElement('span', { style: { fontSize: 9, color: 'var(--muted)' } }, totalCount + ' items'),
             React.createElement('div', { style: { flex: 1 } }),
             React.createElement('span', { style: { fontSize: 9, color: 'var(--muted)', fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', gap: 8 } },
               React.createElement('kbd', { style: { padding: '1px 4px', background: 'var(--bg-subtle)', borderRadius: 3, border: '0.5px solid var(--border)' } }, '\u2191\u2193'),
@@ -443,6 +613,8 @@ export default function Layout(props) {
   var cmdKEnabled = props.cmdK !== false // enabled by default when title is set
   var cmdKPlaceholder = (props.cmdK && props.cmdK.placeholder) || 'Jump to...'
   var cmdKItems = props.cmdKItems // optional custom items; auto-built from nav if omitted
+  var cmdKOnSearch = props.onSearch // async callback for server-side search
+  var cmdKRecentKey = props.recentKey // localStorage key for recent items
   var showCompanyName = props.showCompanyName // when true, appends " // {session.company_name}" to title
   var byLine = props.byLine // e.g. "by Sprint Mode" — shown after product name in muted secondary style
   var userMenuExtra = props.userMenuExtra // optional React element rendered in user menu between Profile and Sign out
@@ -849,6 +1021,8 @@ export default function Layout(props) {
             items={cmdkItems}
             onNavigate={function(to) { navigate(to) }}
             placeholder={cmdKPlaceholder}
+            onSearch={cmdKOnSearch}
+            recentKey={cmdKRecentKey}
           />
         )}
       </div>
