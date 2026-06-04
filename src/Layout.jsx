@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react'
 import { NavLink, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { getSession, clearSession } from './api.js'
-import { IconChevron, IconSearch, IconMoon, IconSun, IconUser } from './Icons.jsx'
+import { IconChevron, IconSearch, IconMoon, IconSun, IconUser, ProductIcon } from './Icons.jsx'
 import { NotificationBell } from './NotificationBell.jsx'
 
 // ═══ SESSION CONTEXT ═══
