@@ -402,7 +402,7 @@ export function PortalSwitcher() {
   useEffect(function() {
     if (_portalCache) { setPortals(_portalCache); return }
     if (!_portalFetch) {
-      _portalFetch = fetch('/api/my-portals', { credentials: 'include' })
+      _portalFetch = fetch('https://api.sprintmode.ai/api/my-portals', { credentials: 'include' })
         .then(function(r) { return r.json() })
         .then(function(data) {
           if (data.ok && data.data && data.data.portals) {
