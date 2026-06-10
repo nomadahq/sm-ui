@@ -9,6 +9,7 @@ var S = { xmlns: 'http://www.w3.org/2000/svg', width: 16, height: 16, viewBox: '
 export var IconGrid = function(p) { return <svg {...S} {...p}><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> }
 export var IconCode = function(p) { return <svg {...S} {...p}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> }
 export var IconDoc = function(p) { return <svg {...S} {...p}><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg> }
+export var IconSignature = function(p) { return <svg {...S} {...p}><path d="M3 17c3-3 4-9 6-9s2 6 4 6 2-4 4-4"/><line x1="3" y1="20" x2="21" y2="20"/></svg> }
 export var IconLock = function(p) { return <svg {...S} {...p}><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg> }
 export var IconTrend = function(p) { return <svg {...S} {...p}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> }
 export var IconUsers = function(p) { return <svg {...S} {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }

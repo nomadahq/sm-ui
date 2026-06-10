@@ -30,7 +30,7 @@ export { default as ApiDocs } from './ApiDocs.jsx'
 
 // Icons
 export {
-  IconGrid, IconCode, IconDoc, IconLock, IconTrend,
+  IconGrid, IconCode, IconDoc, IconSignature, IconLock, IconTrend,
   IconUsers, IconUser, IconDollar, IconTerminal, IconGear,
   IconSessions, IconEye, IconLayers, IconStar, IconCheck,
   IconRefresh, IconWarn, IconSpark, IconClick, IconPercent,
