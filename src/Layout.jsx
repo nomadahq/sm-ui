@@ -768,7 +768,7 @@ export default function Layout(props) {
   // View As gate:
   // viewAsAnyRole=true  -> any logged-in session can use View As (product/client portals)
   // viewAsAnyRole=false -> only super_admin/admin can use View As (admin portal default)
-  var isSuperAdmin = session && (session.role === 'super_admin' || session.portal_role === 'super_admin' || session.role === 'admin' || session.portal_role === 'admin')
+  var isSuperAdmin = session && (session.role === 'super_admin' || session.portal_role === 'super_admin' || session.role === 'admin' || session.portal_role === 'admin' || session.is_sm_team)
   var showViewAs = viewAsEnabled && (viewAsAnyRole ? !!session : isSuperAdmin)
   var _va = useState(null); var viewAs = _va[0]; var setViewAs = _va[1]
   var _au = useState([]); var allUsers = _au[0]; var setAllUsers = _au[1]
