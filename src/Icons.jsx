@@ -154,3 +154,10 @@ export var IconSpeakerphone = function(p) { return <svg {...S} {...p}><path d="M
 export var IconPencilPlus = function(p) { return <svg {...S} {...p}><path d="M4 20h4l10.5-10.5a2.828 2.828 0 1 0-4-4L4 16v4"/><path d="M13.5 6.5l4 4"/><path d="M16 19h6"/><path d="M19 16v6"/></svg> }
 
 export var IconBell = function(p) { return <svg {...S} {...p}><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3H4a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg> }
+export var IconBolt = function(p) { return <svg {...S} {...p}><path d="M13 3l0 7l6 0l-8 11l0-7l-6 0l8-11"/></svg> }
+export var IconCalendarEvent = function(p) { return <svg {...S} {...p}><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M8 15h2v2H8z"/></svg> }
+export var IconCircleFilled = function(p) { return <svg {...S} {...p} fill="currentColor" stroke="none"><circle cx="12" cy="12" r="10"/></svg> }
+export var IconHandshake = function(p) { return <svg {...S} {...p}><path d="M11 17a1 1 0 0 1-1 1H6l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6"/><path d="M14 14l2 2l4-4"/></svg> }
+export var IconKey = function(p) { return <svg {...S} {...p}><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1-4.069 0l-3.602-3.602a2.877 2.877 0 0 1 0-4.069l2.643-2.643a2.877 2.877 0 0 1 4.069 0z"/><path d="M14.5 7.5l-9.5 9.5"/><path d="M3 21l2-2"/><path d="M7 17l-1-1"/></svg> }
+export var IconNote = function(p) { return <svg {...S} {...p}><path d="M13 20l7-7"/><path d="M13 20v-6a1 1 0 0 1 1-1h6"/><path d="M13 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7"/></svg> }
+export var IconPhone = function(p) { return <svg {...S} {...p}><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg> }
